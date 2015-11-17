@@ -1,0 +1,14 @@
+{
+	"name": "sentilo-client-sample-nodejs",
+	"version": "1.0.0",
+	"description": "Sample code that uses the Sentilo Nodejs client library",
+	"main": "server.js",
+	"author": "Sentilo Team (http://www.sentilo.io)",
+	"license": "ISC",
+	"dependencies": 
+	{
+		"restify": "*",
+		"sync-request": "*",
+		"onoff": "*"
+	}
+}
