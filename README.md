@@ -4,6 +4,10 @@ This is a sample code that uses the Sentilo Nodejs Client Library. The _server_ 
 
 You must apply a few changes in your code in order to complete the sample configuration.
 
+## Setup
+- Your favourite IDE
+- Node 12
+
 ## Config
 
 Follow next steps to configure this sample:
