@@ -64,10 +64,9 @@ console.log('My ip address is: ' + myIp + ', and my port: ' + myPort);
 // Service and example options
 // You must modify it under your requeriments
 const samplesOptions = {
-    host : 'localhost',
-    port : '8081',
+    apiUrl : 'http://localhost:8081',
     headers : {
-           identity_key : 'YOUR_IDENTITY_KEY'
+           identity_key : 'f7a702ad6b701c1693f8390a4102a6ec909c4944195be0c5991004cfd7f398ba'
     },
     provider : 'samples-provider',
     sensor : 'sample-sensor-nodejs',
@@ -91,8 +90,8 @@ const server = restify.createServer({
 });
 
 
-// We only need a POST endpoint service to receive ordercs callbacks
-// The path will be [POST] http://localhost:8080/order
+// We only need a POST endpoint service to receive orders callbacks
+// The path will be [POST] http://<RASPI IP>:8000/order
 server.post('/order', function(req, res, next) {
     res.send(req.params);
 
@@ -107,7 +106,8 @@ server.post('/order', function(req, res, next) {
     return next();
 });
 
-// Starts the server and listen on port 8080
+
+// Starts the server and listen on port 8000
 server.listen(myPort, function() {
     console.log('%s listening at %s', server.name, myEndpoint);
     console.log('The server is now ready to receive POST incoming calls');

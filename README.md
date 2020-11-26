@@ -1,53 +1,60 @@
-# Sample for Sentilo Node.js client library
+# Example usage Sentilo Node.js client library
 
-This is a sample code that uses the Sentilo Nodejs Client Library. The _server_ application file is the _server.js_ file, that imports the library.
+This repository is a code for the [tutorial on Sentilo with NodeJS and Rapberry Pi](https://sentilo.readthedocs.io/en/latest/tutorials/raspberrypi_tutorial.html).
+ This is a sample code that uses the [Sentilo Javascript Client Library](https://github.com/sentilo/sentilo-client-nodejs). 
 
-You must apply a few changes in your code in order to complete the sample configuration.
+This code will work on Node.js at least v8.0+.
 
-## Setup
-- Your favourite IDE
-- Node 12
+Creates a Sentilo client that lets you operate a GPIO actuator via a simple HTTP API, via the Sentilo broker. 
+It also publishes various data to Sentilo every minute.   
 
-## Config
+## Prerequistes
+- Some Sentilo instance, either your own, or [Thingtia](https://www.thingtia.cloud/), or even the [Sentilo VM](https://sentilo.readthedocs.io/en/latest/use_a_virtual_machine.html)
+- Your Raspi's IP should be accessible by the Sentilo instance (only needed for the subscription). If you're running Sentilo on your LAN or localhost, 
+  you should be fine. If you're on LAN and using Thingtia, the subscription part won't probably work unless 
+  you have a static IP address and setup a NAT.
+- Node.js 8 or higher
+- Npm
 
-Follow next steps to configure this sample:
 
-- Download and put in the same directory the Sentilo's Nodejs client library and this sample code
-- Edit the _server.js_ file to set your Sentilo instance configurations, and replace the sequences _YOUR-SENTILO-INSTANCE-XXX_ with your custom configurations as it corresponds, such some like this:
+## Setting up Sentilo
+- You have to create a new provider 'samples-provider' or choose an existing one.  
+- In the Catalog, section "Types of Sensors / Actuators" ensure a `sensorType` 'status' exists
+- In the Catalog, section "Types of components" ensure a `componentType` 'generic' exists
+
+
+## Configuration
+
+Edit the `samplesOptions` in `server.js` file:
+ 
+- Replace `YOUR_SENTILO-INSTANCE-IDENTITY-KEY` with the token of your provider 'samples-provider'
+- Replace `YOUR_SENTILO-INSTANCE-URL` with the URL of Sentilo¡s API server, i.e. 'http://sentilo:8081'
 <pre>
-var samplesOptions = {
-    host : 'YOUR-SENTILO-INSTANCE-HOST-IP',
-    port : 'YOUR-SENTILO-INSTANCE-HOST-PORT',
+const samplesOptions = {
+    apiUrl : 'YOUR_SENTILO-INSTANCE-URL',
     headers : {
-        identity_key : 'YOUR_SENTILO-INSTANCE-DEFAULT-IDENTITY-KEY'
-    }
-    tokenId : 'YOUR-SENTILO-INSTANCE-IDENTITY-KEY',
-    providerTokenId : 'YOUR-SENTILO-INSTANCE-PROVIDER-IDENTITY-KEY',
-	providerId  : 'samples-provider',
-	sensorId	: 'sample-sensor-001',
-	componentType : 'generic',
-	sensorDataType : 'TEXT',
-	sensorType : 'status',
-	sensorUnit : '',
-	sensorLocation: '41.4122494 2.2101553'
+           identity_key : 'YOUR_SENTILO-INSTANCE-IDENTITY-KEY'
+    },
+    provider : 'samples-provider',
+    sensor : 'sample-sensor-nodejs',
+    component : 'sample-component',
+    componentType : 'generic',
+    sensorDataType : 'TEXT',
+    sensorType : 'status',
+    sensorUnit : '',
+    sensorLocation : '41.387015 2.170047'
 };
 </pre>
 
-## Usage
 
-Once you have imported and initialized the library, you can invoke the services that you'll find in the **sentilo.js** file (this is a simple wrapper to the service files):
-
-* **init** : initialize all library client services
-* **existsSensorInCatalog** : test if is there the sensor in the catalog
-* **createSensor** : create the sensor in the catalog
-* **publishObservations** : publish observations to the Sentilo instance
-* **createAlerts** : create alerts passed as list
-* **publishAlarm** : publish an alarm for an alert
-
-For more information, please look at the **/src** library directory files, where you'll find all the available services
 
 ## Running the sample
 
-Run the sample by typping in bash:
-<pre>$ node server.js</pre>
+Run the sample by typing in bash:
+<pre>
+npm install
+$ node server.js
+</pre>
+
+You can then access the server at http://your-raspi-ip:8000.
 
