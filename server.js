@@ -67,9 +67,8 @@ const samplesOptions = {
     host : 'localhost',
     port : '8081',
     headers : {
+           identity_key : 'YOUR_IDENTITY_KEY'
     },
-    tokenId : 'f7a702ad6b701c1693f8390a4102a6ec909c4944195be0c5991004cfd7f398ba',
-    providerTokenId : 'f7a702ad6b701c1693f8390a4102a6ec909c4944195be0c5991004cfd7f398ba',
     provider : 'samples-provider',
     sensor : 'sample-sensor-nodejs',
     component : 'sample-component',
@@ -77,8 +76,13 @@ const samplesOptions = {
     sensorDataType : 'TEXT',
     sensorType : 'status',
     sensorUnit : '',
-    sensorLocation : '40 2'
+    sensorLocation : '41.387015 2.170047'
 };
+
+// Init Sentilo services for this example
+// Here you must pass as paramether the specific configuration
+sentilo.init(samplesOptions);
+
 
 // Starts a RESTFul server to manage orders inputs via POST calls
 const server = restify.createServer({
@@ -109,9 +113,6 @@ server.listen(myPort, function() {
     console.log('The server is now ready to receive POST incoming calls');
 });
 
-// Init Sentilo services for this example
-// Here you must pass as paramether the specific configuration
-sentilo.init(samplesOptions);
 
 // Test if is there the sensor configured in the catalog
 const existsSensor = sentilo.existsSensorInCatalog(samplesOptions);
