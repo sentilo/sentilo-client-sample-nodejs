@@ -62,11 +62,11 @@ const myOrderEndoint = myEndpoint + myOrderEndointPath;
 console.log('My ip address is: ' + myIp + ', and my port: ' + myPort);
 
 // Service and example options
-// You must modify it under your requeriments
+// You should change these parameters according to your environment
 const samplesOptions = {
     apiUrl : 'http://localhost:8081',
     headers : {
-           identity_key : 'f7a702ad6b701c1693f8390a4102a6ec909c4944195be0c5991004cfd7f398ba'
+           identity_key : 'YOUR_SENTILO-INSTANCE-IDENTITY-KEY'
     },
     provider : 'samples-provider',
     sensor : 'sample-sensor-nodejs',
