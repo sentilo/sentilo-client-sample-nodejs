@@ -5,10 +5,10 @@
 	"main": "server.js",
 	"author": "Sentilo Team (http://www.sentilo.io)",
 	"license": "ISC",
-	"dependencies": 
-	{
+	"dependencies": {
 		"restify": "*",
 		"sync-request": "*",
-		"onoff": "*"
+		"onoff": "*",
+		"sentilo-client-nodejs": "git+https://github.com/sentilo/sentilo-client-nodejs.git#master"
 	}
 }

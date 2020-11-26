@@ -27,24 +27,24 @@
  * https://www.gnu.org/licenses/lgpl.txt
  */
 // A very simple RESTFul server module
-var restify = require('restify');
+const restify = require('restify');
 
 // The OS information module
-var os = require('os');
+const os = require('os');
 
 // Include some Sentilo operations from the Nodejs client library
-var sentilo = require('./sentilo.js');
+const sentilo = require('sentilo-client-nodejs');
 
 // Module that interacts with the local sensor
-var sensor = require('./sensor.js');
+const sensor = require('./sensor.js');
 
 // Module that interacts with the local actuator
-var actuator = require('./actuator.js');
+const actuator = require('./actuator.js');
 actuator.init();
 
 // Get some OS values, like the sensor IP
-var interfaces = os.networkInterfaces();
-var addresses = [];
+const interfaces = os.networkInterfaces();
+const addresses = [];
 for (var k in interfaces) {
     for (var k2 in interfaces[k]) {
         var address = interfaces[k][k2];
@@ -53,24 +53,23 @@ for (var k in interfaces) {
         }
     }
 }
-var myIp = addresses[0];
-var myPort = 8080;
-var myEndpoint = 'http://'+myIp+':'+myPort;
-var myOrderEndointPath = '/order'; 
-var myOrderEndoint = myEndpoint + myOrderEndointPath;
+const myIp = addresses[0];
+const myPort = 8000;
+const myEndpoint = 'http://'+myIp+':'+myPort;
+const myOrderEndointPath = '/order';
+const myOrderEndoint = myEndpoint + myOrderEndointPath;
 
 console.log('My ip address is: ' + myIp + ', and my port: ' + myPort);
 
 // Service and example options
 // You must modify it under your requeriments
-var samplesOptions = {
-    host : 'YOUR_SENTILO_INSTANCE_HOST_IP',
-    port : 'YOUR_SENTILO_INSTANCE_HOST_PORT',
+const samplesOptions = {
+    host : 'localhost',
+    port : '8081',
     headers : {
-        identity_key : 'YOUR_SENTILO_INSTANCE_DEFAULT_IDENTITY_KEY'
     },
-    tokenId : 'YOUR_SENTILO_INSTANCE_IDENTITY_KEY',
-    providerTokenId : 'YOUR_SENTILO_INSTANCE_PROVIDER_IDENTITY_KEY',
+    tokenId : 'f7a702ad6b701c1693f8390a4102a6ec909c4944195be0c5991004cfd7f398ba',
+    providerTokenId : 'f7a702ad6b701c1693f8390a4102a6ec909c4944195be0c5991004cfd7f398ba',
     provider : 'samples-provider',
     sensor : 'sample-sensor-nodejs',
     component : 'sample-component',
@@ -78,17 +77,15 @@ var samplesOptions = {
     sensorDataType : 'TEXT',
     sensorType : 'status',
     sensorUnit : '',
-    sensorLocation : 'YOUR_SENSOR_LOCATION'
+    sensorLocation : '40 2'
 };
 
 // Starts a RESTFul server to manage orders inputs via POST calls
-var server = restify.createServer({
+const server = restify.createServer({
     name : 'SentiloClient for Nodejs Example Server',
     version : '1.0.0'
 });
-server.use(restify.acceptParser(server.acceptable));
-server.use(restify.queryParser());
-server.use(restify.bodyParser());
+
 
 // We only need a POST endpoint service to receive ordercs callbacks
 // The path will be [POST] http://localhost:8080/order
@@ -117,7 +114,7 @@ server.listen(myPort, function() {
 sentilo.init(samplesOptions);
 
 // Test if is there the sensor configured in the catalog
-var existsSensor = sentilo.existsSensorInCatalog(samplesOptions);
+const existsSensor = sentilo.existsSensorInCatalog(samplesOptions);
 if (!existsSensor) {
     // If not, then create it
     sentilo.createSensor(samplesOptions);
@@ -126,7 +123,7 @@ if (!existsSensor) {
 // Now we can publish a first alarm that informs that the sensor is up
 // First of all let create an external alert
 console.log('Registering the System Status Alert...');
-var alertsListInputMessage = {
+const alertsListInputMessage = {
     alerts : [ {
         id : 'SYSTEM_STATUS_ALERT',
         name : 'SYSTEM_STATUS_ALERT',
@@ -137,7 +134,7 @@ var alertsListInputMessage = {
 sentilo.createAlerts(alertsListInputMessage);
 
 // And then, we can publish an alarm to inform that the system is up now
-var alarmInputMessage = {
+const alarmInputMessage = {
     message : 'The system goes up on ' + new Date()
 };
 sentilo.publishAlarm('SYSTEM_STATUS_ALERT', alarmInputMessage);
@@ -145,7 +142,7 @@ console.log('Alarm published: ' + alarmInputMessage.message);
 
 // Subscribe the sensor orders
 // We'll manage it throught our server on POST service
-var subscriptionInputMessage = {
+const subscriptionInputMessage = {
     endpoint : myOrderEndoint
 };
 sentilo.subscribeOrder(subscriptionInputMessage);
@@ -153,7 +150,7 @@ sentilo.subscribeOrder(subscriptionInputMessage);
 
 // Now, we can publish observations every 60 seconds
 // And still waiting for incoming orders
-var systemObservationsTimeout = 60000;
+const systemObservationsTimeout = 60000;
 console.log('The sensor is now up, and we\'ll be sending some observations every ' + systemObservationsTimeout + ' ms');
 setInterval(function() {
     // Send some System information
