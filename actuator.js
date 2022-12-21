@@ -43,7 +43,7 @@ module.exports = {
         // Configure the GPIO as OUTPUT
         led = new Gpio(14, 'out');
 
-        console.log('Turning OFF the LED');
+        console.log('[actuator] Turning OFF the LED');
 
         // Turn off the LED on startup
         led.writeSync(0);
@@ -57,13 +57,13 @@ module.exports = {
      *            A Sentilo order object structure
      */
     executeOrder : function(order) {
-        console.log('Executing order: ' + order.message);
+        console.log('[actuator] Executing order: ' + order.message);
 
         if (order.message === 'ON') {
-            console.log('Turning ON the LED');
+            console.log('[actuator] Turning ON the LED');
             led.writeSync(1);
         } else if (order.message === 'OFF') {
-            console.log('Turning OFF the LED');
+            console.log('[actuator] Turning OFF the LED');
             led.writeSync(0);
         }
 
