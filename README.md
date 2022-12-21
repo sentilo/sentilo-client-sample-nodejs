@@ -29,6 +29,7 @@ Edit the `samplesOptions` in `server.js` file:
  
 - Replace `YOUR_SENTILO-INSTANCE-IDENTITY-KEY` with the token of your provider 'samples-provider'
 - Replace `YOUR_SENTILO-INSTANCE-URL` with the URL of Sentilo¡s API server, i.e. 'http://sentilo:8081'
+
 <pre>
 const samplesOptions = {
     apiUrl : 'YOUR_SENTILO-INSTANCE-URL',
@@ -52,7 +53,7 @@ const samplesOptions = {
 
 Run the sample by typing in bash:
 <pre>
-npm install
+$ npm install
 $ node server.js
 </pre>
 

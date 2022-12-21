@@ -82,13 +82,11 @@ const samplesOptions = {
 // Here you must pass as paramether the specific configuration
 sentilo.init(samplesOptions);
 
-
 // Starts a RESTFul server to manage orders inputs via POST calls
 const server = restify.createServer({
     name : 'SentiloClient for Nodejs Example Server',
     version : '1.0.0'
 });
-
 
 // We only need a POST endpoint service to receive orders callbacks
 // The path will be [POST] http://<RASPI IP>:8000/order
@@ -106,61 +104,66 @@ server.post('/order', function(req, res, next) {
     return next();
 });
 
-
 // Starts the server and listen on port 8000
 server.listen(myPort, function() {
     console.log('%s listening at %s', server.name, myEndpoint);
     console.log('The server is now ready to receive POST incoming calls');
+    initSample();
 });
 
-
-// Test if is there the sensor configured in the catalog
-const existsSensor = sentilo.existsSensorInCatalog(samplesOptions);
-if (!existsSensor) {
-    // If not, then create it
-    sentilo.createSensor(samplesOptions);
-}
-
-// Now we can publish a first alarm that informs that the sensor is up
-// First of all let create an external alert
-console.log('Registering the System Status Alert...');
-const alertsListInputMessage = {
-    alerts : [ {
-        id : 'SYSTEM_STATUS_ALERT',
-        name : 'SYSTEM_STATUS_ALERT',
-        description : 'Custom alert to inform the system status',
-        type : 'EXTERNAL'
-    } ]
+const initSample = () => {
+	// Test if is there the sensor configured in the catalog
+	// IMPORTANT: 'status' sensor type must already exists before execute this command
+	console.log('Creating the sample sensor if not exists...');
+	const existsSensor = sentilo.existsSensorInCatalog(samplesOptions);
+	if (!existsSensor) {
+	    // If not, then create it
+	    sentilo.createSensor(samplesOptions);
+	}
+	
+	// Subscribe the sensor orders
+	// We'll manage it throught our server on POST service
+	console.log('Registering sensor orders subscription...');
+	const subscriptionInputMessage = {
+	    endpoint : myOrderEndoint
+	};
+	sentilo.subscribeOrder(subscriptionInputMessage);
+	// sentilo.subscribeOrderToAll(subscriptionInputMessage);
+	
+	// Now we can publish a first alarm that informs that the sensor is up
+	// First of all let create an external alert
+	// IMPORTANT: We'll receive a 400 http error if alert already exists
+	console.log('Registering the System Status Alert...');
+	const alertsListInputMessage = {
+	    alerts : [ {
+	        id : 'SYSTEM_STATUS_ALERT',
+	        name : 'SYSTEM_STATUS_ALERT',
+	        description : 'Custom alert to inform the system status',
+	        type : 'EXTERNAL'
+	    } ]
+	};
+	sentilo.createAlerts(alertsListInputMessage);
+	
+	// And then, we can publish an alarm to inform that the system is up now
+	const alarmInputMessage = {
+	    message : 'The system goes up on ' + new Date()
+	};
+	sentilo.publishAlarm('SYSTEM_STATUS_ALERT', alarmInputMessage);
+	console.log('Alarm published: ' + alarmInputMessage.message);
+	
+	// Now, we can publish observations every 60 seconds
+	// And still waiting for incoming orders
+	const systemObservationsTimeout = 60000;
+	console.log('The sensor is now up, and we\'ll be sending some observations every ' + systemObservationsTimeout + ' ms');
+	setInterval(function() {
+	    // Send some System information
+	    var freeMemValue = "OS freemem: " + os.freemem();
+	    console.log('Retrieved system freemem value: [' + freeMemValue + '] and publishing it as an observation...');
+	    sentilo.publishObservations(freeMemValue, samplesOptions);
+	
+	    // Retrieve some sensor data and send it as observation...
+	    var sensorDataValue = "Sensor value: " + sensor.readSensorValue();
+	    console.log('Retrieved sensor value: [' + sensorDataValue + '] and publishing it as an observation...');
+	    sentilo.publishObservations(sensorDataValue, samplesOptions);
+	}, systemObservationsTimeout);
 };
-sentilo.createAlerts(alertsListInputMessage);
-
-// And then, we can publish an alarm to inform that the system is up now
-const alarmInputMessage = {
-    message : 'The system goes up on ' + new Date()
-};
-sentilo.publishAlarm('SYSTEM_STATUS_ALERT', alarmInputMessage);
-console.log('Alarm published: ' + alarmInputMessage.message);
-
-// Subscribe the sensor orders
-// We'll manage it throught our server on POST service
-const subscriptionInputMessage = {
-    endpoint : myOrderEndoint
-};
-sentilo.subscribeOrder(subscriptionInputMessage);
-// sentilo.subscribeOrderToAll(subscriptionInputMessage);
-
-// Now, we can publish observations every 60 seconds
-// And still waiting for incoming orders
-const systemObservationsTimeout = 60000;
-console.log('The sensor is now up, and we\'ll be sending some observations every ' + systemObservationsTimeout + ' ms');
-setInterval(function() {
-    // Send some System information
-    var freeMemValue = "OS freemem: " + os.freemem();
-    console.log('Retrieved system freemem value: [' + freeMemValue + '] and publishing it as an observation...');
-    sentilo.publishObservations(freeMemValue, samplesOptions);
-
-    // Retrieve some sensor data and send it as observation...
-    var sensorDataValue = "Sensor value: " + sensor.readSensorValue();
-    console.log('Retrieved sensor value: [' + sensorDataValue + '] and publishing it as an observation...');
-    sentilo.publishObservations(sensorDataValue, samplesOptions);
-}, systemObservationsTimeout);
